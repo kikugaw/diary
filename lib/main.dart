@@ -48,6 +48,24 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () => setState(() {})),
         ],
       ),
+      drawer: Drawer(
+        child: ListView(children: <Widget>[
+          DrawerHeader(
+            child: Text('メニューバー'),
+            // decoration: BoxDecoration(
+            //   color: Colors.blue[100],
+            // ),
+          ),
+          ListTile(
+            title: Text("トップページへ"),
+            trailing: Icon(Icons.home),
+            // onTap: () {
+            //   Navigator.push(context,
+            //       MaterialPageRoute(builder: (context) => SelectPage()));
+            // },
+          ),
+        ]),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
