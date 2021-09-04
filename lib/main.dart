@@ -1,3 +1,4 @@
+import 'package:diary_test/post_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -40,11 +41,17 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         actions: <Widget>[
           IconButton(
-              icon: Icon(
-                Icons.today_sharp,
-                size: 35,
-              ),
-              onPressed: () => setState(() {})),
+            icon: Icon(
+              Icons.today_sharp,
+              size: 35,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PostPage()),
+              );
+            },
+          ),
         ],
       ),
       drawer: Drawer(
@@ -72,7 +79,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        //onPressed: (),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PostPage()),
+          );
+        },
         tooltip: 'Increment',
         child: Icon(
           Icons.art_track_sharp,
