@@ -55,7 +55,7 @@ class _ChangeFormState extends State<ChangeForm> {
               maxLengthEnforced: false,
               style: TextStyle(
                 color: Colors.red,
-                fontSize: 21,
+                fontSize: 20,
               ),
               obscureText: false,
               minLines: 1,
