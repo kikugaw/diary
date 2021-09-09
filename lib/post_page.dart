@@ -1,5 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PostPage extends StatelessWidget {
   @override
@@ -32,6 +34,24 @@ class ChangeForm extends StatefulWidget {
 
 class _ChangeFormState extends State<ChangeForm> {
   String _text = '';
+  File _image;
+  final picker = ImagePicker();
+
+  Future _getImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = File(pickedFile.path);
+    });
+
+    // setState(() {
+    //   if (pickedFile != null) {
+    //     _image = File(pickedFile.path);
+    //   } else {
+    //     print('No image selected.');
+    //   }
+    // });
+  }
 
   void _handleText(String e) {
     setState(() {
@@ -44,13 +64,6 @@ class _ChangeFormState extends State<ChangeForm> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: <Widget>[
-            /*Text(
-              "$_text",
-              style: TextStyle(
-                  color: Colors.blueAccent,
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.w500),
-            ),*/
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -72,7 +85,16 @@ class _ChangeFormState extends State<ChangeForm> {
                     onPrimary: Colors.blue,
                     //elevation: 16,
                   ),
-                  onPressed: () {},
+                  onPressed: _getImage,
+                ),
+                SizedBox(
+                  height: 30,
+                  width: 30,
+                ),
+                Center(
+                  child: _image == null
+                      ? Text('No image selected.')
+                      : Image.file(_image),
                 ),
               ],
             ),
