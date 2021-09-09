@@ -1,16 +1,23 @@
+
 import 'package:diary_test/main.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PostPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: Text(
           '新規投稿',
           style: TextStyle(
             fontSize: 25,
+            fontWeight: FontWeight.w600,
+            //fontFamily: 'Kosygin',
+            color: Colors.black,
           ),
         ),
       ),
@@ -31,6 +38,24 @@ class _ChangeFormState extends State<ChangeForm> {
   TextEditingController _diaryInputController;
 
   String _text = '';
+  File _image;
+  final picker = ImagePicker();
+
+  Future _getImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = File(pickedFile.path);
+    });
+
+    // setState(() {
+    //   if (pickedFile != null) {
+    //     _image = File(pickedFile.path);
+    //   } else {
+    //     print('No image selected.');
+    //   }
+    // });
+  }
 
   void _handleText(String e) {
     setState(() {
@@ -97,5 +122,87 @@ class _ChangeFormState extends State<ChangeForm> {
         ],
       ),
     );
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                ElevatedButton.icon(
+                  icon: const Icon(
+                    Icons.add_photo_alternate_outlined,
+                    color: Colors.black,
+                  ),
+                  label: const Text(
+                    '写真追加',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 17,
+                      color: Colors.black,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.grey[300],
+                    onPrimary: Colors.blue,
+                    //elevation: 16,
+                  ),
+                  onPressed: _getImage,
+                ),
+                SizedBox(
+                  height: 30,
+                  width: 30,
+                ),
+                Center(
+                  child: _image == null
+                      ? Text('No image selected.')
+                      : Image.file(_image),
+                ),
+              ],
+            ),
+            new TextField(
+              autofocus: true,
+              enabled: true,
+              // 入力数
+              maxLength: 300,
+              maxLengthEnforced: false,
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 21,
+              ),
+              obscureText: false,
+              minLines: 1,
+              maxLines: 30,
+              //パスワード
+              onChanged: _handleText,
+              decoration: const InputDecoration(
+                icon: Icon(
+                  Icons.article_outlined,
+                  size: 28,
+                  color: Colors.black,
+                ),
+                hintText: '日記を書く',
+                hintStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              child: Text(
+                '投稿する',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 17,
+                  color: Colors.black,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey[300],
+                onPrimary: Colors.blue,
+                elevation: 16,
+              ),
+              onPressed: () {},
+            )
+          ],
+        ));
   }
 }
