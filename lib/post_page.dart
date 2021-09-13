@@ -116,7 +116,6 @@ class _ChangeFormState extends State<ChangeForm> {
             enabled: true,
             // 入力数
             maxLength: 300,
-            maxLengthEnforced: false,
             style: TextStyle(
               color: Colors.red,
               fontSize: 21,
@@ -164,8 +163,12 @@ class _ChangeFormState extends State<ChangeForm> {
                   }
                 },
               );*/
-              setState(() {});
-              Navigator.pop(context, _diaryInputController.text);
+              // setState(() {
+              if (_text.length > 0) {
+                Navigator.pop(context, _text);
+                _diaryInputController.clear();
+              }
+              // });
             },
           ),
         ],

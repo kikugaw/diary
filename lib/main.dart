@@ -116,7 +116,9 @@ class _MyHomePageState extends State<MyHomePage> {
             MaterialPageRoute(builder: (context) => PostPage()),
           );
           print(result);
-          return diaryList.add(result);
+          setState(() {
+            return diaryList.add(result);
+          });
         },
         tooltip: 'Increment',
         child: Icon(
