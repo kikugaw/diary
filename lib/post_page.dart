@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PostPage extends StatelessWidget {
   @override
@@ -38,6 +39,17 @@ class _ChangeFormState extends State<ChangeForm> {
   String _text = '';
   File _image;
   final picker = ImagePicker();
+  List _diaryList = [];
+
+  Future saveList(key, list) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList(key, list);
+  }
+
+  Future save(key, text) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList(key, text);
+  }
 
   Future _getImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -59,12 +71,16 @@ class _ChangeFormState extends State<ChangeForm> {
     setState(() {
       _text = e;
     });
+    save('key', _text);
   }
 
   //コントローラーの初期化
   void initState() {
     super.initState();
     _diaryInputController = TextEditingController();
+    setState(() {
+      saveList('my_diary', _diaryList);
+    });
   }
 
   //statefulオブジェクトが削除されるときに、参照を削除してくれる
@@ -163,12 +179,14 @@ class _ChangeFormState extends State<ChangeForm> {
                   }
                 },
               );*/
-              // setState(() {
-              if (_text.length > 0) {
-                Navigator.pop(context, _text);
-                _diaryInputController.clear();
-              }
-              // });
+              setState(() {
+                if (_diaryInputController.text.length > 0) {
+                  _diaryList.add(_diaryInputController.text);
+                  saveList('my_diary', _diaryList);
+                  _diaryInputController.clear();
+                }
+              });
+              Navigator.pop(context, _text);
             },
           ),
         ],

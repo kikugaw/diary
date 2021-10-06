@@ -1,5 +1,6 @@
 import 'package:diary_test/post_page.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'calender_page.dart';
 
@@ -31,6 +32,36 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<String> diaryList = [];
+  List<String> diary = [];
+
+  Future<void> update() async {
+    setState(() {});
+  }
+
+  removeData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('my_diary');
+  }
+
+  saveList(key, list) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList(key, list);
+  }
+
+  getList() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      // diary = prefs.getStringList('my_diary') ?? [];
+      diaryList = prefs.getStringList('my_diary') ?? [];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // 初期化時にShared Preferencesに保存している値を読み込む
+    getList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: ListView.builder(
               // リストの長さを計算
+              // itemCount: diary.length > 0 ? diary.length : diaryList.length,
               itemCount: diaryList.length,
               itemBuilder: (BuildContext context, index) {
                 return Container(
@@ -96,17 +128,43 @@ class _MyHomePageState extends State<MyHomePage> {
                     title: Text(
                       // リストに表示する文字列を設定
                       ("$index : ${diaryList[index]}"),
+
                       style: TextStyle(
                         fontFamily: 'OpenSans',
                         fontSize: 24,
                         color: Colors.white,
                       ),
                     ),
+                    // title: diary.length > 0
+                    //     ? Text(
+                    //         // リストに表示する文字列を設定
+                    //         ("$index : ${diary[index]}"),
+                    //         style: TextStyle(
+                    //           fontFamily: 'OpenSans',
+                    //           fontSize: 24,
+                    //           color: Colors.white,
+                    //         ),
+                    //       )
+                    //     : Text(
+                    //         // リストに表示する文字列を設定
+                    //         ("$index : ${diaryList[index]}"),
+                    //         style: TextStyle(
+                    //           fontFamily: 'OpenSans',
+                    //           fontSize: 24,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
                   ),
                 );
               },
             ),
           ),
+          // TextButton(onPressed: removeData, child: Text('更新')),
+          TextButton(onPressed: removeData, child: Text('削除')),
+          Container(
+            // child: Text('$diary'),
+            child: Text('$diaryList'),
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -119,6 +177,9 @@ class _MyHomePageState extends State<MyHomePage> {
           setState(() {
             return diaryList.add(result);
           });
+          // saveList('my_diary', diary);
+          saveList('my_diary', diaryList);
+          getList();
         },
         tooltip: 'Increment',
         child: Icon(
