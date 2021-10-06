@@ -173,13 +173,13 @@ class _MyHomePageState extends State<MyHomePage> {
             context,
             MaterialPageRoute(builder: (context) => PostPage()),
           );
-          getList();
           print(result);
           setState(() {
             return diaryList.add(result);
           });
           // saveList('my_diary', diary);
           saveList('my_diary', diaryList);
+          getList();
         },
         tooltip: 'Increment',
         child: Icon(
