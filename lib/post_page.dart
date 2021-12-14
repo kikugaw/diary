@@ -41,14 +41,9 @@ class _ChangeFormState extends State<ChangeForm> {
   final picker = ImagePicker();
   List _diaryList = [];
 
-  Future saveList(key, list) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList(key, list);
-  }
-
   Future save(key, text) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList(key, text);
+    prefs.setString(key, text);
   }
 
   Future _getImage() async {
@@ -79,7 +74,7 @@ class _ChangeFormState extends State<ChangeForm> {
     super.initState();
     _diaryInputController = TextEditingController();
     setState(() {
-      saveList('my_diary', _diaryList);
+      // saveList('my_diary', _diaryList);
     });
   }
 
@@ -182,7 +177,7 @@ class _ChangeFormState extends State<ChangeForm> {
               setState(() {
                 if (_diaryInputController.text.length > 0) {
                   _diaryList.add(_diaryInputController.text);
-                  saveList('my_diary', _diaryList);
+                  // saveList('my_diary', _diaryList);
                   _diaryInputController.clear();
                 }
               });

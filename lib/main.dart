@@ -1,5 +1,11 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:diary_test/post_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'calender_page.dart';
@@ -33,6 +39,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<String> diaryList = [];
   List<String> diary = [];
+  File imageFile;
+  String imagePath;
 
   Future<void> update() async {
     setState(() {});
@@ -56,11 +64,32 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  saveImage(imagePath) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('image', imagePath);
+  }
+
+  Future<Uint8List> getImage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // setState(() async {
+    // diary = prefs.getStringList('my_diary') ?? [];
+    imagePath = prefs.getString('image');
+    //imageのpathをByteDataに変換
+    ByteData byte = await rootBundle.load(imagePath);
+
+    //ByteDataをUint8List変換
+    final Uint8List list = byte.buffer.asUint8List();
+    return list;
+    // });
+  }
+
   @override
   void initState() {
     super.initState();
     // 初期化時にShared Preferencesに保存している値を読み込む
     getList();
+    getImage();
+    final imagePicker = ImagePicker();
   }
 
   @override
@@ -112,53 +141,60 @@ class _MyHomePageState extends State<MyHomePage> {
         // column widgetにwidgetのセットを配列で渡す
         children: <Widget>[
           Expanded(
-            child: ListView.builder(
-              // リストの長さを計算
-              // itemCount: diary.length > 0 ? diary.length : diaryList.length,
-              itemCount: diaryList.length,
-              itemBuilder: (BuildContext context, index) {
-                return Container(
-                  padding: EdgeInsets.only(
-                      top: 0.0, right: 0.0, bottom: 0.0, left: 0.0),
-                  margin: EdgeInsets.only(
-                      top: 1.0, right: 0.0, bottom: 0.0, left: 0.0),
-                  color: Colors.cyan[600],
-                  child: ListTile(
-                    leading: Icon(Icons.star),
-                    title: Text(
-                      // リストに表示する文字列を設定
-                      ("$index : ${diaryList[index]}"),
+              child: GridView.builder(
+                  itemCount: diaryList.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2),
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      child: imageFile != null
+                          ? Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('images/cat.png'),
+                                ),
+                              ),
+                              child: Container(
+                                alignment: Alignment.bottomCenter,
+                                child: ListTile(
+                                  title: Text(
+                                    // リストに表示する文字列を設定
+                                    ("$index : ${diaryList[index]}"),
+                                    style: TextStyle(
+                                      fontFamily: 'OpenSans',
+                                      fontSize: 24,
+                                    ),
+                                  ),
+                                  leading: Icon(Icons.star),
+                                  subtitle: Text("Date"),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              color: Colors.grey[300],
+                              margin: EdgeInsets.all(10.0),
+                              child: Center(
+                                child: Container(
+                                  alignment: Alignment.bottomCenter,
+                                  child: ListTile(
+                                    title: Text(
+                                      // リストに表示する文字列を設定
+                                      ("$index : ${diaryList[index]}"),
+                                      style: TextStyle(
+                                        fontFamily: 'OpenSans',
+                                        fontSize: 24,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    leading: Icon(Icons.star),
+                                    subtitle: Text("Date"),
+                                  ),
+                                ),
+                              ),
+                            ),
+                    );
+                  })),
 
-                      style: TextStyle(
-                        fontFamily: 'OpenSans',
-                        fontSize: 24,
-                        color: Colors.white,
-                      ),
-                    ),
-                    // title: diary.length > 0
-                    //     ? Text(
-                    //         // リストに表示する文字列を設定
-                    //         ("$index : ${diary[index]}"),
-                    //         style: TextStyle(
-                    //           fontFamily: 'OpenSans',
-                    //           fontSize: 24,
-                    //           color: Colors.white,
-                    //         ),
-                    //       )
-                    //     : Text(
-                    //         // リストに表示する文字列を設定
-                    //         ("$index : ${diaryList[index]}"),
-                    //         style: TextStyle(
-                    //           fontFamily: 'OpenSans',
-                    //           fontSize: 24,
-                    //           color: Colors.white,
-                    //         ),
-                    //       ),
-                  ),
-                );
-              },
-            ),
-          ),
           // TextButton(onPressed: removeData, child: Text('更新')),
           TextButton(onPressed: removeData, child: Text('削除')),
           Container(
